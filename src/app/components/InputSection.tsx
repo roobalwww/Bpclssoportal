@@ -1,6 +1,14 @@
-import { Search, Calendar, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Calendar, Upload, ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
+import { FileHistoryModal } from './FileHistoryModal';
+
+interface FileHistoryItem {
+  id: string;
+  name: string;
+  uploadDate: Date;
+  size: string;
+}
 
 export function InputSection({ onFetch }: { onFetch: (ccNumber: string, dateRange: string, file?: File) => void }) {
   const [ccNumber, setCcNumber] = useState('');
@@ -8,6 +16,8 @@ export function InputSection({ onFetch }: { onFetch: (ccNumber: string, dateRang
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +48,26 @@ export function InputSection({ onFetch }: { onFetch: (ccNumber: string, dateRang
     const file = event.target.files?.[0];
     if (file) {
       setUploadedFile(file);
+
+      // Add to history
+      const newHistoryItem: FileHistoryItem = {
+        id: Date.now().toString(),
+        name: file.name,
+        uploadDate: new Date(),
+        size: formatFileSize(file.size),
+      };
+      setFileHistory([newHistoryItem, ...fileHistory]);
     }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const handleDeleteHistory = (id: string) => {
+    setFileHistory(fileHistory.filter(item => item.id !== id));
   };
 
   const getDaysInMonth = () => {
@@ -195,7 +224,7 @@ export function InputSection({ onFetch }: { onFetch: (ccNumber: string, dateRang
             Fetch Data
           </button>
 
-          <div>
+          <div className="flex items-center gap-2">
             <input
               ref={fileInputRef}
               type="file"
@@ -210,9 +239,29 @@ export function InputSection({ onFetch }: { onFetch: (ccNumber: string, dateRang
               <Upload size={20} />
               <span>{uploadedFile ? uploadedFile.name.slice(0, 15) + '...' : 'Upload Excel'}</span>
             </button>
+            <button
+              onClick={() => setShowHistory(true)}
+              className="p-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors relative"
+              title="File History"
+            >
+              <History size={20} />
+              {fileHistory.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs flex items-center justify-center text-white" style={{ backgroundColor: '#007BC9' }}>
+                  {fileHistory.length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {showHistory && (
+        <FileHistoryModal
+          onClose={() => setShowHistory(false)}
+          history={fileHistory}
+          onDelete={handleDeleteHistory}
+        />
+      )}
     </div>
   );
 }

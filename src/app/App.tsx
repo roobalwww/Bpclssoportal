@@ -6,7 +6,6 @@ import { KPIStrip } from "./components/KPIStrip";
 import { PerformanceTable } from "./components/PerformanceTable";
 import { AnalysisCharts } from "./components/AnalysisCharts";
 import { AnalysisKPIs } from "./components/AnalysisKPIs";
-import { SmartInsights } from "./components/SmartInsights";
 import { ManagerProfile } from "./components/ManagerProfile";
 import { SetTargetsModal } from "./components/SetTargetsModal";
 
@@ -134,12 +133,6 @@ const mockTrendData = [
   { date: "Week 4", fuel: 1431, nonFuel: 401 },
 ];
 
-const mockInsights = [
-  "Target achievement at 82% - on track to meet monthly goals with ₹72 Cr total revenue",
-  "HSD contributes 60% of total fuel revenue (₹33.6 Cr), highest in category",
-  "Non-fuel sales growing 9.2% vs LY - strong performance in QOC (₹6.5 Cr) and Lubricants (₹3.8 Cr)",
-];
-
 const mockAnalysisKPIs = {
   fuelYoY: 9.2,
   nonFuelYoY: 9.2,
@@ -257,7 +250,6 @@ export default function App() {
                     data={getNonFuelData(targets)}
                     showVolume={false}
                   />
-                  <SmartInsights insights={mockInsights} />
                 </div>
               </>
             )}
@@ -274,9 +266,6 @@ export default function App() {
                   growthData={mockGrowthData}
                   categoryGrowthData={mockCategoryGrowthData}
                 />
-                <div className="mt-6">
-                  <SmartInsights insights={mockInsights} />
-                </div>
               </>
             )}
           </div>
