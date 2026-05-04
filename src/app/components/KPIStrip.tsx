@@ -1,11 +1,14 @@
-import { TrendingUp, Target, DollarSign, PieChart } from 'lucide-react';
+import { TrendingUp, Target, Award, TrendingDown } from 'lucide-react';
 
 export function KPIStrip({ data }: { data: any }) {
+  const momGrowthValue = parseFloat(data.momGrowth);
+  const isPositiveGrowth = momGrowthValue >= 0;
+
   const kpis = [
     {
-      label: 'Total Revenue',
-      value: `₹${data.totalRevenue} Cr`,
-      icon: DollarSign,
+      label: 'Rank',
+      value: `#${data.rank}`,
+      icon: Award,
       highlight: true,
     },
     {
@@ -21,10 +24,12 @@ export function KPIStrip({ data }: { data: any }) {
       highlight: false,
     },
     {
-      label: 'Fuel vs Non-Fuel',
-      value: `${data.fuelVsNonFuel}`,
-      icon: PieChart,
+      label: 'MoM Growth',
+      value: `${data.momGrowth}%`,
+      icon: isPositiveGrowth ? TrendingUp : TrendingDown,
       highlight: false,
+      isGrowth: true,
+      growthPositive: isPositiveGrowth,
     },
   ];
 
@@ -32,6 +37,9 @@ export function KPIStrip({ data }: { data: any }) {
     <div className="grid grid-cols-4 gap-6 mb-6">
       {kpis.map((kpi, index) => {
         const Icon = kpi.icon;
+        const isGrowthCard = kpi.isGrowth;
+        const growthColor = isGrowthCard ? (kpi.growthPositive ? '#10b981' : '#ef4444') : kpi.highlight ? '#FFE000' : '#007BC9';
+
         return (
           <div
             key={index}
@@ -41,10 +49,15 @@ export function KPIStrip({ data }: { data: any }) {
             <div className="flex items-start justify-between mb-3">
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: kpi.highlight ? '#FFE000' : '#007BC9' }}
+                style={{ backgroundColor: growthColor }}
               >
                 <Icon size={20} className={kpi.highlight ? 'text-gray-900' : 'text-white'} />
               </div>
+              {isGrowthCard && (
+                <div className={`flex items-center gap-1 ${kpi.growthPositive ? 'text-green-600' : 'text-red-600'}`}>
+                  {kpi.growthPositive ? '↑' : '↓'}
+                </div>
+              )}
             </div>
             <div className="text-3xl text-gray-900 mb-1">{kpi.value}</div>
             <div className="text-sm text-gray-600">{kpi.label}</div>

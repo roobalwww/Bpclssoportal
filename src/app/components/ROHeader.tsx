@@ -22,11 +22,11 @@ export function ROHeader({ data, onSetTargets }: { data: any; onSetTargets?: () 
           {onSetTargets && (
             <button
               onClick={onSetTargets}
-              className="px-4 py-2 rounded-lg border-2 hover:bg-gray-50 transition-colors flex items-center gap-2"
-              style={{ borderColor: '#FFE000' }}
+              className="px-4 py-2 rounded-lg transition-all hover:shadow-lg shadow-md flex items-center gap-2"
+              style={{ backgroundColor: '#FFE000' }}
             >
-              <Target size={16} className="text-gray-700" />
-              <span className="text-sm text-gray-700">Set Targets</span>
+              <Target size={16} className="text-gray-900" />
+              <span className="text-sm text-gray-900 font-medium">Set Targets</span>
             </button>
           )}
         </div>

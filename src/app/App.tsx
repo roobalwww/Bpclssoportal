@@ -17,10 +17,10 @@ const mockROData = {
 };
 
 const mockKPIData = {
-  totalRevenue: "72.0",
+  rank: "3",
   targetAchievement: "82",
   yoyGrowth: "+12.3",
-  fuelVsNonFuel: "78:22",
+  momGrowth: "+5.2",
 };
 
 const getFuelData = (targets: any) => [
@@ -243,12 +243,10 @@ export default function App() {
                   <PerformanceTable
                     title="Fuel Performance"
                     data={getFuelData(targets)}
-                    showVolume={false}
                   />
                   <PerformanceTable
                     title="Non-Fuel Performance"
                     data={getNonFuelData(targets)}
-                    showVolume={false}
                   />
                 </div>
               </>

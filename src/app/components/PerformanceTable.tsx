@@ -1,4 +1,4 @@
-export function PerformanceTable({ title, data, showVolume = true }: { title: string; data: any[]; showVolume?: boolean }) {
+export function PerformanceTable({ title, data }: { title: string; data: any[] }) {
   const calculateProgress = (achieved: number, target: number) => {
     return Math.min((achieved / target) * 100, 100);
   };
@@ -17,14 +17,21 @@ export function PerformanceTable({ title, data, showVolume = true }: { title: st
         <h3 className="text-white">{title}</h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '20%' }} />
+          </colgroup>
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-6 py-3 text-left text-sm text-gray-700">Product</th>
               <th className="px-6 py-3 text-right text-sm text-gray-700">Target</th>
               <th className="px-6 py-3 text-right text-sm text-gray-700">Achieved</th>
               <th className="px-6 py-3 text-right text-sm text-gray-700">LY</th>
-              {showVolume && <th className="px-6 py-3 text-right text-sm text-gray-700">Volume (KL)</th>}
+              <th className="px-6 py-3 text-right text-sm text-gray-700">Growth</th>
             </tr>
           </thead>
           <tbody>
@@ -33,42 +40,54 @@ export function PerformanceTable({ title, data, showVolume = true }: { title: st
               const vsLY = calculateVsLY(row.achieved, row.ly);
 
               return (
-                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors" style={{ height: '64px' }}>
                   <td className="px-6 py-4 text-gray-900">{row.product}</td>
                   <td className="px-6 py-4 text-right text-gray-700">{row.target.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="space-y-1">
-                      <div className="text-gray-900">{row.achieved.toLocaleString()}</div>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5">
-                        <div
-                          className="h-1.5 rounded-full transition-all"
-                          style={{
-                            width: `${progress}%`,
-                            backgroundColor: progress >= 90 ? '#10b981' : progress >= 70 ? '#FFE000' : '#f59e0b',
-                          }}
-                        />
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="w-full bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className="h-1.5 rounded-full transition-all"
+                            style={{
+                              width: `${progress}%`,
+                              backgroundColor: progress >= 90 ? '#10b981' : progress >= 70 ? '#FFE000' : '#ef4444',
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-gray-900 text-right" style={{ minWidth: '60px' }}>
+                        {row.achieved.toLocaleString()}
                       </div>
                     </div>
                   </td>
+                  <td className="px-6 py-4 text-right text-gray-700">{row.ly.toLocaleString()}</td>
                   <td className="px-6 py-4 text-right">
-                    <div className="space-y-1">
-                      <div className="text-gray-700">{row.ly.toLocaleString()}</div>
-                      <div className={`text-xs ${vsLY >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {vsLY >= 0 ? '+' : ''}{vsLY.toFixed(1)}%
-                      </div>
+                    <div className={`font-medium ${vsLY >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {vsLY >= 0 ? '+' : ''}{vsLY.toFixed(1)}%
                     </div>
                   </td>
-                  {showVolume && <td className="px-6 py-4 text-right text-gray-900">{row.volume.toLocaleString()}</td>}
                 </tr>
               );
             })}
             {totalRow && (
-              <tr className="bg-gray-50 border-t-2 border-gray-300">
-                <td className="px-6 py-4 font-semibold text-gray-900">{totalRow.product}</td>
-                <td className="px-6 py-4 text-right font-semibold text-gray-900">{totalRow.target.toLocaleString()}</td>
-                <td className="px-6 py-4 text-right font-semibold text-gray-900">{totalRow.achieved.toLocaleString()}</td>
-                <td className="px-6 py-4 text-right font-semibold text-gray-900">{totalRow.ly.toLocaleString()}</td>
-                {showVolume && <td className="px-6 py-4 text-right font-semibold text-gray-900">{totalRow.volume.toLocaleString()}</td>}
+              <tr className="bg-gray-50 border-t-2 border-gray-300" style={{ height: '64px' }}>
+                <td className="px-6 py-4 font-bold text-gray-900">{totalRow.product}</td>
+                <td className="px-6 py-4 text-right font-bold text-gray-900">{totalRow.target.toLocaleString()}</td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1"></div>
+                    <div className="text-gray-900 text-right font-bold" style={{ minWidth: '60px' }}>
+                      {totalRow.achieved.toLocaleString()}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-right font-bold text-gray-900">{totalRow.ly.toLocaleString()}</td>
+                <td className="px-6 py-4 text-right">
+                  <div className={`font-bold ${calculateVsLY(totalRow.achieved, totalRow.ly) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {calculateVsLY(totalRow.achieved, totalRow.ly) >= 0 ? '+' : ''}{calculateVsLY(totalRow.achieved, totalRow.ly).toFixed(1)}%
+                  </div>
+                </td>
               </tr>
             )}
           </tbody>
