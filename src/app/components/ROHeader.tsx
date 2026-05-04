@@ -17,7 +17,7 @@ export function ROHeader({ data, onSetTargets }: { data: any; onSetTargets?: () 
             <span className="font-semibold text-gray-900">{data.ccNumber}</span>
           </div>
           <div className="px-4 py-2 rounded-lg" style={{ backgroundColor: '#007BC9' }}>
-            <span className="text-white text-sm">Rank: {data.rank}</span>
+            <span className="text-white text-sm">Rating: {data.rank}</span>
           </div>
           {onSetTargets && (
             <button
